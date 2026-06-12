@@ -1,5 +1,6 @@
 #include "SampleView.h"
 #include "../util/ConsoleColor.h"
+#include "../util/StringUtil.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -47,7 +48,7 @@ static void printTableRow(const Sample& s, std::ostream& out) {
     if (depleted) out << ConsoleColor::RED;
     out << "  │ "
         << std::left << std::setw(9)  << s.id
-        << "│ " << std::setw(25) << s.name
+        << "│ " << std::setw(StringUtil::setWidth(s.name, 25)) << s.name
         << "│ " << std::right << std::setw(12) << s.avgProductionTime
         << "│ " << std::setw(6) << std::fixed << std::setprecision(2) << s.yield << "  "
         << "│ " << std::setw(6) << s.stock << "  │";

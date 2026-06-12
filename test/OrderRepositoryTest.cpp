@@ -24,7 +24,13 @@ protected:
         o.sampleId     = "S-001";
         o.customerName = "TestCo";
         o.quantity     = 10;
-        o.setStatusDirect(status);
+        switch (status) {
+        case OrderStatus::PRODUCING: o.approve(false); break;
+        case OrderStatus::CONFIRMED: o.approve(true);  break;
+        case OrderStatus::RELEASE:   o.approve(true); o.release(); break;
+        case OrderStatus::REJECTED:  o.reject();       break;
+        default: break; // RESERVED = 기본값
+        }
         return o;
     }
 };

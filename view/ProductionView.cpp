@@ -1,5 +1,6 @@
 #include "ProductionView.h"
 #include "../util/ConsoleColor.h"
+#include "../util/StringUtil.h"
 #include <iostream>
 #include <iomanip>
 #include <ctime>
@@ -25,14 +26,14 @@ void ProductionView::printProductionLine(const ProductionLine& line, std::ostrea
 
     out << "\n";
     ConsoleColor::println(out,
-        "  ┌──────┬──────────────────────┬──────────┬──────┬───────────────────┬──────────────┐",
+        "  ┌────────┬──────────────────────┬──────────┬──────┬───────────────────┬──────────────┐",
         ConsoleColor::BLUE);
     ConsoleColor::print(out,
-        "  │ 상태 │ 주문번호              │ 시료 ID  │ 생산량│ 완료 예정         │ 잔여시간     │",
+        "  │ 상태   │ 주문번호              │ 시료 ID  │ 생산량│ 완료 예정         │ 잔여시간     │",
         ConsoleColor::BLUE);
     out << "\n";
     ConsoleColor::println(out,
-        "  ├──────┼──────────────────────┼──────────┼──────┼───────────────────┼──────────────┤",
+        "  ├────────┼──────────────────────┼──────────┼──────┼───────────────────┼──────────────┤",
         ConsoleColor::BLUE);
 
     const auto& jobs = line.jobs();
@@ -46,8 +47,12 @@ void ProductionView::printProductionLine(const ProductionLine& line, std::ostrea
         out << "  │ ";
         if (i == 0) {
             ConsoleColor::print(out, "생산중", ConsoleColor::ORANGE);
+            // "생산중" = 6칸, 추가 패딩 없음
         } else {
-            ConsoleColor::print(out, "대기 " + std::to_string(i), ConsoleColor::YELLOW);
+            std::string waitText = "대기 " + std::to_string(i);
+            ConsoleColor::print(out, waitText, ConsoleColor::YELLOW);
+            int pad = 6 - StringUtil::displayWidth(waitText);
+            if (pad > 0) out << std::string(pad, ' ');
         }
         out << " │ "
             << std::left << std::setw(21) << job.orderNo
@@ -70,7 +75,7 @@ void ProductionView::printProductionLine(const ProductionLine& line, std::ostrea
     }
 
     ConsoleColor::println(out,
-        "  └──────┴──────────────────────┴──────────┴──────┴───────────────────┴──────────────┘",
+        "  └────────┴──────────────────────┴──────────┴──────┴───────────────────┴──────────────┘",
         ConsoleColor::BLUE);
 }
 

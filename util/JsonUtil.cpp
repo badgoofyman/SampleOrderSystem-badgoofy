@@ -69,7 +69,13 @@ static std::string escapeString(const std::string& s) {
 
 std::vector<JsonObject> readArray(const std::string& filePath) {
     std::ifstream file(filePath);
-    if (!file.is_open()) return {};
+    if (!file.is_open()) {
+        // 파일이 없으면 빈 배열 (정상 — 첫 실행)
+        // 파일이 있는데 열기 실패 → 권한/잠금 오류로 데이터 손실 방지
+        if (std::filesystem::exists(filePath))
+            throw std::runtime_error("Cannot open file (permission/lock?): " + filePath);
+        return {};
+    }
 
     std::string content((std::istreambuf_iterator<char>(file)),
                          std::istreambuf_iterator<char>());
@@ -113,33 +119,42 @@ void writeArray(const std::string& filePath,
     if (sep != std::string::npos)
         std::filesystem::create_directories(filePath.substr(0, sep));
 
-    std::ofstream file(filePath);
-    if (!file.is_open())
-        throw std::runtime_error("Cannot open for writing: " + filePath);
+    // atomic write: 임시 파일에 먼저 쓴 뒤 rename으로 교체
+    // → 쓰기 실패 시 기존 파일 보존
+    std::string tmpPath = filePath + ".tmp";
+    {
+        std::ofstream file(tmpPath, std::ios::out | std::ios::trunc);
+        if (!file.is_open())
+            throw std::runtime_error("Cannot open temp file: " + tmpPath);
 
-    file << "[\n";
-    for (size_t i = 0; i < objects.size(); ++i) {
-        const auto& obj = objects[i];
-        file << "  {\n";
-        for (size_t j = 0; j < fieldDefs.size(); ++j) {
-            const auto& fd = fieldDefs[j];
-            auto it = obj.find(fd.name);
-            const std::string& val = (it != obj.end()) ? it->second : "";
+        file << "[\n";
+        for (size_t i = 0; i < objects.size(); ++i) {
+            const auto& obj = objects[i];
+            file << "  {\n";
+            for (size_t j = 0; j < fieldDefs.size(); ++j) {
+                const auto& fd = fieldDefs[j];
+                auto it = obj.find(fd.name);
+                const std::string& val = (it != obj.end()) ? it->second : "";
 
-            file << "    \"" << fd.name << "\": ";
-            if (fd.type == ValueType::String)
-                file << '"' << escapeString(val) << '"';
-            else
-                file << (val.empty() ? "0" : val);
+                file << "    \"" << fd.name << "\": ";
+                if (fd.type == ValueType::String)
+                    file << '"' << escapeString(val) << '"';
+                else
+                    file << (val.empty() ? "0" : val);
 
-            if (j + 1 < fieldDefs.size()) file << ',';
+                if (j + 1 < fieldDefs.size()) file << ',';
+                file << '\n';
+            }
+            file << "  }";
+            if (i + 1 < objects.size()) file << ',';
             file << '\n';
         }
-        file << "  }";
-        if (i + 1 < objects.size()) file << ',';
-        file << '\n';
+        file << "]\n";
+        file.close();
+        if (!file)
+            throw std::runtime_error("Write error on temp file: " + tmpPath);
     }
-    file << "]\n";
+    std::filesystem::rename(tmpPath, filePath);
 }
 
 } // namespace JsonUtil

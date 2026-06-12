@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "IOrderRepository.h"
 #include "../model/Order.h"
+#include "../util/JsonUtil.h"
 #include <string>
 #include <vector>
 
@@ -17,4 +18,7 @@ public:
 
 private:
     std::string filePath_;
+
+    static Order              rowToOrder(const JsonUtil::JsonObject& row);
+    static JsonUtil::JsonObject orderToRow(const Order& o);
 };

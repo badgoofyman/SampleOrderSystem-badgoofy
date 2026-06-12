@@ -14,7 +14,7 @@ static const std::vector<JsonUtil::FieldDef> ORDER_FIELDS = {
 };
 
 
-static Order rowToOrder(const JsonUtil::JsonObject& row) {
+Order OrderRepository::rowToOrder(const JsonUtil::JsonObject& row) {
     auto get = [&](const std::string& k) -> const std::string& {
         static const std::string empty;
         auto it = row.find(k);
@@ -32,7 +32,7 @@ static Order rowToOrder(const JsonUtil::JsonObject& row) {
     return o;
 }
 
-static JsonUtil::JsonObject orderToRow(const Order& o) {
+JsonUtil::JsonObject OrderRepository::orderToRow(const Order& o) {
     return {
         { "orderNo",             o.orderNo },
         { "sampleId",            o.sampleId },
