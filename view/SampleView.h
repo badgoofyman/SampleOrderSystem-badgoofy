@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../model/Sample.h"
 #include <iosfwd>
 #include <vector>

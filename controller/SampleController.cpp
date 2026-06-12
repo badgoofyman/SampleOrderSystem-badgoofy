@@ -1,4 +1,4 @@
-#include "SampleController.h"
+﻿#include "SampleController.h"
 #include "../view/SampleView.h"
 #include "../view/MonitorView.h"
 #include <algorithm>
