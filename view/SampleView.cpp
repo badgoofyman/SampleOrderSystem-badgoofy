@@ -43,12 +43,16 @@ static void printTableHeader(std::ostream& out) {
 }
 
 static void printTableRow(const Sample& s, std::ostream& out) {
+    bool depleted = (s.stock == 0);
+    if (depleted) out << ConsoleColor::RED;
     out << "  │ "
         << std::left << std::setw(9)  << s.id
         << "│ " << std::setw(25) << s.name
         << "│ " << std::right << std::setw(12) << s.avgProductionTime
         << "│ " << std::setw(6) << std::fixed << std::setprecision(2) << s.yield << "  "
-        << "│ " << std::setw(6) << s.stock << "  │\n";
+        << "│ " << std::setw(6) << s.stock << "  │";
+    if (depleted) out << ConsoleColor::RESET;
+    out << "\n";
 }
 
 static void printTableFooter(std::ostream& out) {
