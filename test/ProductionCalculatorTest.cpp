@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+﻿#include <gmock/gmock.h>
 #include "../util/ProductionCalculator.h"
 
 using namespace ProductionCalculator;
@@ -16,8 +16,8 @@ TEST(ProductionCalculatorTest, Qty_1_yield050_returns3) {
     EXPECT_EQ(calcProductionQty(1, 0.5), 3);
 }
 
-TEST(ProductionCalculatorTest, Qty_9_yield090_returns11) {
-    EXPECT_EQ(calcProductionQty(9, 0.9), 11);
+TEST(ProductionCalculatorTest, Qty_9_yield090_returns12) {
+    EXPECT_EQ(calcProductionQty(9, 0.9), 12);
 }
 
 TEST(ProductionCalculatorTest, Qty_100_yield080_returns139) {

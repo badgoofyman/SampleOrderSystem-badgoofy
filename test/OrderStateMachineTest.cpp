@@ -1,4 +1,4 @@
-#include <gmock/gmock.h>
+﻿#include <gmock/gmock.h>
 #include "../model/Order.h"
 
 // ---- 합법 전환 5가지 ----
