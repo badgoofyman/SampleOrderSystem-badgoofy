@@ -1,4 +1,5 @@
-﻿#include "repository/SampleRepository.h"
+﻿#include <windows.h>
+#include "repository/SampleRepository.h"
 #include "repository/OrderRepository.h"
 #include "model/ProductionLine.h"
 #include "controller/SampleController.h"
@@ -26,6 +27,9 @@ static ProductionLine buildProductionLine(OrderRepository& orderRepo, SampleRepo
 }
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+
     SampleRepository sampleRepo;
     OrderRepository  orderRepo;
     ProductionLine   line = buildProductionLine(orderRepo, sampleRepo);
