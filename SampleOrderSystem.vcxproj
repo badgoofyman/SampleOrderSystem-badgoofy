@@ -161,6 +161,8 @@
     <ClInclude Include="repository\OrderRepository.h" />
     <ClInclude Include="util\ProductionCalculator.h" />
     <ClInclude Include="util\JsonUtil.h" />
+    <ClInclude Include="util\ConsoleColor.h" />
+    <ClInclude Include="model\SystemStatus.h" />
     <ClInclude Include="controller\SampleController.h" />
     <ClInclude Include="controller\OrderController.h" />
     <ClInclude Include="controller\ProductionController.h" />

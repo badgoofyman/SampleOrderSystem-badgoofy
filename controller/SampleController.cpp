@@ -1,7 +1,8 @@
-﻿#include "SampleController.h"
+#include "SampleController.h"
 #include "../view/SampleView.h"
 #include "../view/MonitorView.h"
 #include <algorithm>
+#include <cctype>
 #include <ostream>
 
 SampleController::SampleController(IRepository<Sample>& sampleRepo,
@@ -18,28 +19,63 @@ void SampleController::manageSamples() {
         case 2: listSamples();    break;
         case 3: searchByName();   break;
         case 0: return;
-        default: out_ << "잘못된 선택입니다.\n"; break;
+        default: out_ << "  잘못된 선택입니다.\n"; break;
         }
     }
 }
 
 void SampleController::listSamples() {
-    SampleView::printList(sampleRepo_.findAll(), out_);
+    SampleView::printListPaged(sampleRepo_.findAll(), in_, out_);
 }
 
 void SampleController::registerSample() {
-    Sample s = SampleView::inputNewSample(in_, out_);
+    out_ << "\n  ── 시료 등록 ──\n";
+
+    // 중복 ID 검사 루프
+    std::string id;
+    while (true) {
+        id = SampleView::inputSampleId(in_, out_);
+        if (id.empty()) return;
+        if (!sampleRepo_.findById(id)) break;
+        SampleView::printDuplicateId(out_);
+    }
+
+    std::string name = SampleView::inputSampleName(in_, out_);
+    int time = SampleView::inputProductionTime(in_, out_);
+
+    // 수율 범위 검사 루프 (0.0 < yield <= 1.0)
+    double yield;
+    while (true) {
+        yield = SampleView::inputYield(in_, out_);
+        if (yield > 0.0 && yield <= 1.0) break;
+        SampleView::printInvalidYield(out_);
+    }
+
+    int stock = SampleView::inputStock(in_, out_);
+
+    Sample s;
+    s.id = id; s.name = name; s.avgProductionTime = time; s.yield = yield; s.stock = stock;
     sampleRepo_.save(s);
     SampleView::printRegistered(s, out_);
 }
 
 void SampleController::searchByName() {
     std::string keyword = SampleView::inputSearchName(in_, out_);
+
+    // 대소문자 무시 검색
+    std::string kwLower = keyword;
+    std::transform(kwLower.begin(), kwLower.end(), kwLower.begin(),
+                   [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
     auto all = sampleRepo_.findAll();
     std::vector<Sample> found;
-    for (const auto& s : all)
-        if (s.name.find(keyword) != std::string::npos)
+    for (const auto& s : all) {
+        std::string nameLower = s.name;
+        std::transform(nameLower.begin(), nameLower.end(), nameLower.begin(),
+                       [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        if (nameLower.find(kwLower) != std::string::npos)
             found.push_back(s);
+    }
 
     if (found.empty())
         SampleView::printNotFound(out_);
