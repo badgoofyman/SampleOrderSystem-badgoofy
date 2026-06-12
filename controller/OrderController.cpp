@@ -59,6 +59,7 @@ void OrderController::placeOrder() {
     std::string customer;
     while (true) {
         customer = OrderView::inputCustomerName(in_, out_);
+        if (!in_) return;
         if (!customer.empty()) break;
         OrderView::printInvalidCustomerName(out_);
     }
@@ -67,6 +68,7 @@ void OrderController::placeOrder() {
     int qty;
     while (true) {
         qty = OrderView::inputQuantity(in_, out_);
+        if (!in_) return;
         if (qty > 0) break;
         OrderView::printInvalidQuantity(out_);
     }

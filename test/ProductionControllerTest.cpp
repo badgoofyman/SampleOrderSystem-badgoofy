@@ -136,11 +136,11 @@ TEST_F(ProductionControllerTest, ProcessCompletedJobs_InProgressJob_NoUpdate) {
     time_t future = time(nullptr) + 9999;
     line.enqueue({ "ORD-001", "S-001", 5, 9999, future });
 
+    EXPECT_CALL(orderRepo, update(_)).Times(0);
     setup();
     ctrl->processCompletedJobs();
 
     EXPECT_FALSE(line.isEmpty());
-    EXPECT_CALL(orderRepo, update(_)).Times(0);
 }
 
 TEST_F(ProductionControllerTest, ProcessCompletedJobs_MultipleCompleted_ProcessesAll) {
