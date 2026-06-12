@@ -67,3 +67,44 @@ TEST_F(ProductionControllerTest, ShowProductionLine_InProgressJob_NoUpdate) {
     EXPECT_FALSE(line.isEmpty());
     EXPECT_THAT(out.str(), HasSubstr("ORD-002"));
 }
+
+TEST_F(ProductionControllerTest, ShowProductionLine_MultipleJobs_FifoOrderPreserved) {
+    time_t now = time(nullptr);
+    // 첫 번째 잡은 미완료, 두 번째도 미완료
+    line.enqueue({ "ORD-001", "S-001", 5, 99999, now + 99999 });
+    line.enqueue({ "ORD-002", "S-002", 3, 99999, now + 199999 });
+
+    setup();
+    ctrl->showProductionLine();
+
+    // 두 잡 모두 출력되어야 하고 ORD-001이 current(생산중)
+    EXPECT_EQ(line.size(), 2u);
+    EXPECT_EQ(line.current().orderNo, "ORD-001");
+    EXPECT_THAT(out.str(), HasSubstr("ORD-001"));
+    EXPECT_THAT(out.str(), HasSubstr("ORD-002"));
+}
+
+TEST_F(ProductionControllerTest, ShowProductionLine_CompletedJob_StockUpdatedCorrectly) {
+    // productionQty=12, quantity=10 → stock 증가분 = 12 - 10 = 2
+    time_t past = time(nullptr) - 9999;
+    line.enqueue({ "ORD-001", "S-001", 12, 100, past });
+
+    Order o;
+    o.orderNo = "ORD-001"; o.sampleId = "S-001"; o.quantity = 10;
+    o.approve(false);
+    o.productionQty = 12;
+
+    Sample s = makeSample("S-001", 0);
+
+    EXPECT_CALL(orderRepo, findById("ORD-001")).WillOnce(Return(o));
+    EXPECT_CALL(sampleRepo, findById("S-001")).WillOnce(Return(s));
+
+    // stock += productionQty - quantity = 12 - 10 = 2
+    EXPECT_CALL(sampleRepo, update(Field(&Sample::stock, 2))).Times(1);
+    EXPECT_CALL(orderRepo, update(_)).Times(1);
+
+    setup();
+    ctrl->showProductionLine();
+
+    EXPECT_TRUE(line.isEmpty());
+}
