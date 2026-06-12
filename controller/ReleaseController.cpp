@@ -15,7 +15,7 @@ void ReleaseController::processRelease() {
         return;
     }
 
-    OrderView::printReservedList(confirmed, out_);  // 같은 테이블 형식 재사용
+    OrderView::printOrderList(confirmed, out_);
     std::string orderNo = OrderView::selectOrderNo(in_, out_);
 
     Order* target = nullptr;

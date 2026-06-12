@@ -89,7 +89,7 @@ void OrderController::processApproval() {
         OrderView::printNoReservedOrders(out_);
         return;
     }
-    OrderView::printReservedList(reserved, out_);
+    OrderView::printOrderList(reserved, out_);
 
     std::string orderNo = OrderView::selectOrderNo(in_, out_);
     Order* target = nullptr;

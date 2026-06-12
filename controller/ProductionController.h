@@ -10,7 +10,6 @@ public:
     ProductionController(IRepository<Sample>& sampleRepo,
                          IOrderRepository&    orderRepo,
                          ProductionLine&      line,
-                         std::istream&        in,
                          std::ostream&        out);
 
     void showProductionLine();
@@ -19,7 +18,6 @@ private:
     IRepository<Sample>& sampleRepo_;
     IOrderRepository&    orderRepo_;
     ProductionLine&      line_;
-    std::istream&        in_;
     std::ostream&        out_;
 
     void processCompletedJobs();

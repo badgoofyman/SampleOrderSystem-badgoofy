@@ -4,9 +4,8 @@
 ProductionController::ProductionController(IRepository<Sample>& sampleRepo,
                                            IOrderRepository&    orderRepo,
                                            ProductionLine&      line,
-                                           std::istream&        in,
                                            std::ostream&        out)
-    : sampleRepo_(sampleRepo), orderRepo_(orderRepo), line_(line), in_(in), out_(out) {}
+    : sampleRepo_(sampleRepo), orderRepo_(orderRepo), line_(line), out_(out) {}
 
 void ProductionController::processCompletedJobs() {
     while (!line_.isEmpty() && line_.isCurrentComplete()) {

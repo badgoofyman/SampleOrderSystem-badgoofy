@@ -34,7 +34,6 @@ TEST_F(SampleControllerTest, ListSamples_CallsFindAll) {
 }
 
 TEST_F(SampleControllerTest, RegisterSample_CallsSave) {
-    EXPECT_CALL(sampleRepo, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
     EXPECT_CALL(sampleRepo, save(_)).Times(1);
 
     setup("1\nS-002\n테스트 시료\n60\n0.85\n10\n0\n");

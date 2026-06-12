@@ -22,13 +22,13 @@ bool ProductionLine::isCurrentComplete() const {
 
 void ProductionLine::completeAndAdvance() {
     if (!jobs_.empty())
-        jobs_.erase(jobs_.begin());
+        jobs_.pop_front();
 }
 
 size_t ProductionLine::size() const {
     return jobs_.size();
 }
 
-const std::vector<ProductionJob>& ProductionLine::jobs() const {
+const std::deque<ProductionJob>& ProductionLine::jobs() const {
     return jobs_;
 }

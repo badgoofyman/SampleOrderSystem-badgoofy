@@ -29,7 +29,7 @@ void OrderView::printOrderPlaced(const Order& o, std::ostream& out) {
         << "  수량: "     << o.quantity << "\n";
 }
 
-void OrderView::printReservedList(const std::vector<Order>& orders, std::ostream& out) {
+void OrderView::printOrderList(const std::vector<Order>& orders, std::ostream& out) {
     out << "\n"
         << std::left
         << std::setw(22) << "주문번호"

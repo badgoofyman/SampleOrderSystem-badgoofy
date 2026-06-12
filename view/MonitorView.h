@@ -1,15 +1,7 @@
 ﻿#pragma once
+#include "../model/StockStatus.h"
 #include <iosfwd>
-#include <string>
 #include <vector>
-
-struct StockStatus {
-    std::string sampleId;
-    std::string sampleName;
-    std::string status;   // "여유" | "부족" | "고갈"
-    int         stock;
-    int         pendingQty;
-};
 
 class MonitorView {
 public:

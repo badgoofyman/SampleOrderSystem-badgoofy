@@ -1,6 +1,6 @@
 #pragma once
+#include <deque>
 #include <string>
-#include <vector>
 #include <ctime>
 
 struct ProductionJob {
@@ -19,8 +19,8 @@ public:
     bool isCurrentComplete() const;
     void completeAndAdvance();
     size_t size() const;
-    const std::vector<ProductionJob>& jobs() const;
+    const std::deque<ProductionJob>& jobs() const;
 
 private:
-    std::vector<ProductionJob> jobs_;
+    std::deque<ProductionJob> jobs_;
 };

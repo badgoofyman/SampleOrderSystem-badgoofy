@@ -11,7 +11,7 @@
 #include <iostream>
 #include <algorithm>
 
-static ProductionLine buildProductionLine(OrderRepository& orderRepo, SampleRepository& sampleRepo) {
+static ProductionLine buildProductionLine(IOrderRepository& orderRepo, SampleRepository& sampleRepo) {
     ProductionLine line;
     auto producing = orderRepo.findByStatus(OrderStatus::PRODUCING);
     std::sort(producing.begin(), producing.end(),
@@ -36,7 +36,7 @@ int main() {
 
     SampleController    sampleCtrl(sampleRepo, std::cin, std::cout);
     OrderController     orderCtrl(sampleRepo, orderRepo, line, std::cin, std::cout);
-    ProductionController prodCtrl(sampleRepo, orderRepo, line, std::cin, std::cout);
+    ProductionController prodCtrl(sampleRepo, orderRepo, line, std::cout);
     ReleaseController   releaseCtrl(orderRepo, std::cin, std::cout);
 
     while (true) {

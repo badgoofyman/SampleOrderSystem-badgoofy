@@ -18,7 +18,7 @@ protected:
     std::unique_ptr<ProductionController> ctrl;
 
     void setup() {
-        ctrl = std::make_unique<ProductionController>(sampleRepo, orderRepo, line, in, out);
+        ctrl = std::make_unique<ProductionController>(sampleRepo, orderRepo, line, out);
     }
 
     Sample makeSample(const std::string& id, int stock) {

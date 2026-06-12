@@ -154,6 +154,7 @@
     <ClInclude Include="model\Sample.h" />
     <ClInclude Include="model\Order.h" />
     <ClInclude Include="model\ProductionLine.h" />
+    <ClInclude Include="model\StockStatus.h" />
     <ClInclude Include="repository\IRepository.h" />
     <ClInclude Include="repository\IOrderRepository.h" />
     <ClInclude Include="repository\SampleRepository.h" />
