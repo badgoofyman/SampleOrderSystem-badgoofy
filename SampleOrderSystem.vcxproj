@@ -154,6 +154,7 @@
     <ClInclude Include="model\Sample.h" />
     <ClInclude Include="model\Order.h" />
     <ClInclude Include="repository\IRepository.h" />
+    <ClInclude Include="repository\IOrderRepository.h" />
     <ClInclude Include="repository\SampleRepository.h" />
     <ClInclude Include="repository\OrderRepository.h" />
     <ClInclude Include="util\ProductionCalculator.h" />
@@ -166,6 +167,9 @@
     <ClCompile Include="repository\OrderRepository.cpp" />
     <ClCompile Include="util\ProductionCalculator.cpp" />
     <ClCompile Include="util\JsonUtil.cpp" />
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Debug'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="test\main_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>

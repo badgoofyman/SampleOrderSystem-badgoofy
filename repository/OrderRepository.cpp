@@ -7,6 +7,7 @@ static const std::vector<JsonUtil::FieldDef> ORDER_FIELDS = {
     { "sampleId",            JsonUtil::ValueType::String },
     { "customerName",        JsonUtil::ValueType::String },
     { "quantity",            JsonUtil::ValueType::Number },
+    { "productionQty",       JsonUtil::ValueType::Number },
     { "status",              JsonUtil::ValueType::String },
     { "productionStartTime", JsonUtil::ValueType::Number },
     { "releasedAt",          JsonUtil::ValueType::Number },
@@ -24,6 +25,7 @@ static Order rowToOrder(const JsonUtil::JsonObject& row) {
     o.sampleId            = get("sampleId");
     o.customerName        = get("customerName");
     o.quantity            = get("quantity").empty()            ? 0 : std::stoi(get("quantity"));
+    o.productionQty       = get("productionQty").empty()       ? 0 : std::stoi(get("productionQty"));
     o.productionStartTime = get("productionStartTime").empty() ? 0 : static_cast<time_t>(std::stoll(get("productionStartTime")));
     o.releasedAt          = get("releasedAt").empty()          ? 0 : static_cast<time_t>(std::stoll(get("releasedAt")));
     o.setStatusDirect(statusFromString(get("status")));
@@ -36,6 +38,7 @@ static JsonUtil::JsonObject orderToRow(const Order& o) {
         { "sampleId",            o.sampleId },
         { "customerName",        o.customerName },
         { "quantity",            std::to_string(o.quantity) },
+        { "productionQty",       std::to_string(o.productionQty) },
         { "status",              statusToString(o.getStatus()) },
         { "productionStartTime", std::to_string(static_cast<long long>(o.productionStartTime)) },
         { "releasedAt",          std::to_string(static_cast<long long>(o.releasedAt)) },

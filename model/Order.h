@@ -19,6 +19,7 @@ public:
     std::string sampleId;
     std::string customerName;
     int         quantity            = 0;
+    int         productionQty       = 0;  // 실 생산량 (생산 시작 시 기록)
     time_t      productionStartTime = 0;  // epoch, 0 = 미사용
     time_t      releasedAt          = 0;  // epoch, 0 = 미사용
 
