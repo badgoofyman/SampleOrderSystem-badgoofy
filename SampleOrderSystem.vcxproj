@@ -160,11 +160,16 @@
     <ClInclude Include="repository\OrderRepository.h" />
     <ClInclude Include="util\ProductionCalculator.h" />
     <ClInclude Include="util\JsonUtil.h" />
+    <ClInclude Include="controller\SampleController.h" />
+    <ClInclude Include="controller\OrderController.h" />
+    <ClInclude Include="controller\ProductionController.h" />
+    <ClInclude Include="controller\ReleaseController.h" />
     <ClInclude Include="view\MenuView.h" />
     <ClInclude Include="view\SampleView.h" />
     <ClInclude Include="view\OrderView.h" />
     <ClInclude Include="view\MonitorView.h" />
     <ClInclude Include="view\ProductionView.h" />
+    <ClInclude Include="test\MockRepositories.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="model\Sample.cpp" />
@@ -174,6 +179,10 @@
     <ClCompile Include="repository\OrderRepository.cpp" />
     <ClCompile Include="util\ProductionCalculator.cpp" />
     <ClCompile Include="util\JsonUtil.cpp" />
+    <ClCompile Include="controller\SampleController.cpp" />
+    <ClCompile Include="controller\OrderController.cpp" />
+    <ClCompile Include="controller\ProductionController.cpp" />
+    <ClCompile Include="controller\ReleaseController.cpp" />
     <ClCompile Include="view\MenuView.cpp" />
     <ClCompile Include="view\SampleView.cpp" />
     <ClCompile Include="view\OrderView.cpp" />
@@ -198,6 +207,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="test\ProductionLineTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\SampleControllerTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\OrderControllerTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\ProductionControllerTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\ReleaseControllerTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
