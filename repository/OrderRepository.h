@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "IRepository.h"
+#include "IOrderRepository.h"
 #include "../model/Order.h"
 #include <string>
 #include <vector>
 
-class OrderRepository : public IRepository<Order> {
+class OrderRepository : public IOrderRepository {
 public:
     explicit OrderRepository(const std::string& filePath = "data/orders.json");
 
@@ -13,9 +13,7 @@ public:
     void                 save(const Order& order)                 override;
     void                 update(const Order& order)               override;
     void                 remove(const std::string& id)            override;
-
-    // IRepository 확장: 상태별 조회
-    std::vector<Order>   findByStatus(OrderStatus status)  const;
+    std::vector<Order>   findByStatus(OrderStatus status)   const override;
 
 private:
     std::string filePath_;

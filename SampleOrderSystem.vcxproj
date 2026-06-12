@@ -153,19 +153,45 @@
   <ItemGroup>
     <ClInclude Include="model\Sample.h" />
     <ClInclude Include="model\Order.h" />
+    <ClInclude Include="model\ProductionLine.h" />
+    <ClInclude Include="model\StockStatus.h" />
     <ClInclude Include="repository\IRepository.h" />
+    <ClInclude Include="repository\IOrderRepository.h" />
     <ClInclude Include="repository\SampleRepository.h" />
     <ClInclude Include="repository\OrderRepository.h" />
     <ClInclude Include="util\ProductionCalculator.h" />
     <ClInclude Include="util\JsonUtil.h" />
+    <ClInclude Include="controller\SampleController.h" />
+    <ClInclude Include="controller\OrderController.h" />
+    <ClInclude Include="controller\ProductionController.h" />
+    <ClInclude Include="controller\ReleaseController.h" />
+    <ClInclude Include="view\MenuView.h" />
+    <ClInclude Include="view\SampleView.h" />
+    <ClInclude Include="view\OrderView.h" />
+    <ClInclude Include="view\MonitorView.h" />
+    <ClInclude Include="view\ProductionView.h" />
+    <ClInclude Include="test\MockRepositories.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="model\Sample.cpp" />
     <ClCompile Include="model\Order.cpp" />
+    <ClCompile Include="model\ProductionLine.cpp" />
     <ClCompile Include="repository\SampleRepository.cpp" />
     <ClCompile Include="repository\OrderRepository.cpp" />
     <ClCompile Include="util\ProductionCalculator.cpp" />
     <ClCompile Include="util\JsonUtil.cpp" />
+    <ClCompile Include="controller\SampleController.cpp" />
+    <ClCompile Include="controller\OrderController.cpp" />
+    <ClCompile Include="controller\ProductionController.cpp" />
+    <ClCompile Include="controller\ReleaseController.cpp" />
+    <ClCompile Include="view\MenuView.cpp" />
+    <ClCompile Include="view\SampleView.cpp" />
+    <ClCompile Include="view\OrderView.cpp" />
+    <ClCompile Include="view\MonitorView.cpp" />
+    <ClCompile Include="view\ProductionView.cpp" />
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Debug'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="test\main_test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
@@ -179,6 +205,21 @@
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="test\OrderRepositoryTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\ProductionLineTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\SampleControllerTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\OrderControllerTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\ProductionControllerTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\ReleaseControllerTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
