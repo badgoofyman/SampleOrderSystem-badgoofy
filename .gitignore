@@ -29,8 +29,9 @@ ipch/
 packages/gmock.1.11.0/lib/native/lib/
 packages/gmock.1.11.0/lib/native/bin/
 
-# 데이터 파일 (런타임 생성)
-data/
+# 데이터 파일 (런타임 생성, .gitkeep 은 추적)
+data/*
+!data/.gitkeep
 
 # 메모리 파일
 .claude/

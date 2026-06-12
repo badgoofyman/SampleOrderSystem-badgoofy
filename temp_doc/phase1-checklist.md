@@ -27,11 +27,12 @@
 - [ ] `util/ProductionCalculator.h`, `util/ProductionCalculator.cpp` 존재
 - [ ] `test/` 아래 5개 테스트 파일 존재
 - [ ] `data/.gitkeep` 존재 (빈 디렉터리 추적용)
-- [ ] `thirdparty/nlohmann/json.hpp` 존재
+- [ ] `util/JsonUtil.h`, `util/JsonUtil.cpp` 존재
 
 ### 2-2. 파일 인코딩
 - [ ] 한글이 포함된 `.h` / `.cpp` 파일이 **UTF-8 with BOM** 으로 저장됨  
-  확인 방법: VS에서 해당 파일 열기 → 파일 > 다른 이름으로 저장 > 인코딩 드롭다운에서 `유니코드(서명 있는 UTF-8, 코드 페이지 65001)` 표시 확인
+  확인 방법: VS에서 해당 파일 열기 → 파일 > 다른 이름으로 저장 > 인코딩 드롭다운에서 `유니코드(서명 있는 UTF-8, 코드 페이지 65001)` 표시 확인  
+  (Phase 1 소스 파일은 ASCII 전용이므로 Phase 2 이후 뷰 파일 추가 시 확인)
 
 ### 2-3. MVC 의존 방향
 - [ ] `model/` 파일이 `repository/` 또는 `controller/` 헤더를 `#include` 하지 않음
@@ -82,7 +83,7 @@
 - [ ] `calcProductionQty(20, 0.92)` = **25**
 - [ ] `calcProductionQty(10, 1.0)` = **12**
 - [ ] `calcProductionQty(1, 0.5)` = **3**
-- [ ] `calcProductionQty(9, 0.9)` = **11**
+- [ ] `calcProductionQty(9, 0.9)` = **12**
 - [ ] `calcProductionQty(100, 0.8)` = **139**
 
 ### 5-2. 예외 처리 확인
