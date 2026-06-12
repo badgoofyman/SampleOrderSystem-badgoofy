@@ -3,6 +3,7 @@
 #include "../util/ProductionCalculator.h"
 #include <ctime>
 #include <iomanip>
+#include <ostream>
 #include <sstream>
 
 OrderController::OrderController(IRepository<Sample>& sampleRepo,
@@ -45,7 +46,7 @@ void OrderController::placeOrder() {
 
     auto sample = sampleRepo_.findById(o.sampleId);
     if (!sample) {
-        out_ << "존재하지 않는 시료 ID입니다.\n";
+        out_ << "해당 시료 ID가 없습니다.\n";
         return;
     }
     o.orderNo = generateOrderNo();

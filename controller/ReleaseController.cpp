@@ -1,7 +1,7 @@
 #include "ReleaseController.h"
 #include "../view/OrderView.h"
 #include <ctime>
-#include <iostream>
+#include <ostream>
 
 ReleaseController::ReleaseController(IOrderRepository& orderRepo,
                                      std::istream&     in,

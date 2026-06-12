@@ -2,6 +2,7 @@
 #include "../view/SampleView.h"
 #include "../view/MonitorView.h"
 #include <algorithm>
+#include <ostream>
 
 SampleController::SampleController(IRepository<Sample>& sampleRepo,
                                    std::istream& in,
