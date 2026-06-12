@@ -4,6 +4,7 @@
 #include "../model/ProductionLine.h"
 #include "../util/ProductionCalculator.h"
 #include <algorithm>
+#include <optional>
 #include <sstream>
 #include <vector>
 

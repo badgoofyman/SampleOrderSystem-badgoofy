@@ -34,6 +34,14 @@ void OrderView::printInvalidSampleId(std::ostream& out) {
     ConsoleColor::println(out, "  ※ 해당 시료 ID가 없습니다. 다시 입력해주세요.", ConsoleColor::YELLOW);
 }
 
+void OrderView::printInvalidCustomerName(std::ostream& out) {
+    ConsoleColor::println(out, "  ※ 고객명을 입력해주세요.", ConsoleColor::YELLOW);
+}
+
+void OrderView::printInvalidQuantity(std::ostream& out) {
+    ConsoleColor::println(out, "  ※ 수량은 1 이상이어야 합니다. 다시 입력해주세요.", ConsoleColor::YELLOW);
+}
+
 void OrderView::printOrderConfirm(const Sample& s, const std::string& customer,
                                   int qty, std::ostream& out) {
     out << "\n";
