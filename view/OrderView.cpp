@@ -1,5 +1,6 @@
 #include "OrderView.h"
 #include "../util/ConsoleColor.h"
+#include "../util/StringUtil.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -102,7 +103,7 @@ void OrderView::printOrderListNumbered(const std::vector<Order>& orders, std::os
             << std::right << std::setw(2) << (i + 1) << " │ "
             << std::left  << std::setw(21) << o.orderNo << "│ "
             << std::setw(9)  << o.sampleId << "│ "
-            << std::setw(14) << o.customerName << "│ "
+            << std::setw(StringUtil::setWidth(o.customerName, 14)) << o.customerName << "│ "
             << std::setw(4)  << o.quantity << " │\n";
     }
     ConsoleColor::println(out,
@@ -199,7 +200,7 @@ void OrderView::printOrderList(const std::vector<Order>& orders, std::ostream& o
             << std::right << std::setw(2) << (i + 1) << " │ "
             << std::left  << std::setw(21) << o.orderNo << "│ "
             << std::setw(9)  << o.sampleId << "│ "
-            << std::setw(14) << o.customerName << "│ "
+            << std::setw(StringUtil::setWidth(o.customerName, 14)) << o.customerName << "│ "
             << std::setw(4)  << o.quantity << " │\n";
     }
     ConsoleColor::println(out,

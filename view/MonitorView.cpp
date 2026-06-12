@@ -1,5 +1,6 @@
 #include "MonitorView.h"
 #include "../util/ConsoleColor.h"
+#include "../util/StringUtil.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -56,7 +57,7 @@ void MonitorView::printStockStatus(const std::vector<StockStatus>& statuses,
         std::string stockStr = std::to_string(ss.stock);
         out << "  │ "
             << std::left << std::setw(9)  << ss.sampleId
-            << "│ " << std::setw(25) << ss.sampleName
+            << "│ " << std::setw(StringUtil::setWidth(ss.sampleName, 25)) << ss.sampleName
             << "│ ";
         if (ss.stock == 0)
             ConsoleColor::print(out, stockStr, ConsoleColor::RED);
@@ -66,6 +67,9 @@ void MonitorView::printStockStatus(const std::vector<StockStatus>& statuses,
         if (stockPad > 0) out << std::string(stockPad, ' ');
         out << "│ " << std::setw(9) << ss.pendingQty << "│ ";
         ConsoleColor::print(out, ss.status, statusColor);
+        // 상태 컬럼 고정 너비: "여유"/"부족"/"고갈" 모두 4칸, 목표 6칸(헤더 "  상태  " 기준)
+        int statusPad = 6 - StringUtil::displayWidth(ss.status);
+        if (statusPad > 0) out << std::string(statusPad, ' ');
         out << "│\n";
     }
 
