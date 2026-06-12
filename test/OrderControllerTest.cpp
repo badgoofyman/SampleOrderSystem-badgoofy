@@ -78,6 +78,32 @@ TEST_F(OrderControllerTest, PlaceOrder_InvalidThenValid_Reprompts) {
     EXPECT_THAT(out.str(), HasSubstr("없습니다"));
 }
 
+TEST_F(OrderControllerTest, PlaceOrder_EmptyCustomerName_Reprompts) {
+    EXPECT_CALL(sampleRepo, findById("S-001"))
+        .WillRepeatedly(Return(makeSample("S-001", 50)));
+    EXPECT_CALL(orderRepo, findAll()).WillRepeatedly(Return(std::vector<Order>{}));
+    EXPECT_CALL(orderRepo, save(_)).Times(1);
+
+    // 빈 고객명 → 오류 → 정상 고객명 → 수량 → Y
+    setup("S-001\n\n고객A\n10\nY\n");
+    ctrl->placeOrder();
+
+    EXPECT_THAT(out.str(), HasSubstr("고객명"));
+}
+
+TEST_F(OrderControllerTest, PlaceOrder_ZeroQuantity_Reprompts) {
+    EXPECT_CALL(sampleRepo, findById("S-001"))
+        .WillRepeatedly(Return(makeSample("S-001", 50)));
+    EXPECT_CALL(orderRepo, findAll()).WillRepeatedly(Return(std::vector<Order>{}));
+    EXPECT_CALL(orderRepo, save(_)).Times(1);
+
+    // 수량 0 → 오류 → 정상 수량 → Y
+    setup("S-001\n고객A\n0\n5\nY\n");
+    ctrl->placeOrder();
+
+    EXPECT_THAT(out.str(), HasSubstr("수량"));
+}
+
 // ===== processApproval =====
 
 TEST_F(OrderControllerTest, ProcessApproval_EnoughStock_SetsConfirmed) {

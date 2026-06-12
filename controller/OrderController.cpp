@@ -55,8 +55,21 @@ void OrderController::placeOrder() {
         OrderView::printInvalidSampleId(out_);
     }
 
-    std::string customer = OrderView::inputCustomerName(in_, out_);
-    int qty = OrderView::inputQuantity(in_, out_);
+    // 고객명 빈값 재프롬프트
+    std::string customer;
+    while (true) {
+        customer = OrderView::inputCustomerName(in_, out_);
+        if (!customer.empty()) break;
+        OrderView::printInvalidCustomerName(out_);
+    }
+
+    // 수량 0 이하 재프롬프트
+    int qty;
+    while (true) {
+        qty = OrderView::inputQuantity(in_, out_);
+        if (qty > 0) break;
+        OrderView::printInvalidQuantity(out_);
+    }
 
     // 확인 화면
     OrderView::printOrderConfirm(*sample, customer, qty, out_);

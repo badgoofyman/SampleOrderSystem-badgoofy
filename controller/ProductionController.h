@@ -13,12 +13,11 @@ public:
                          std::ostream&        out);
 
     void showProductionLine();
+    void processCompletedJobs();
 
 private:
     IRepository<Sample>& sampleRepo_;
     IOrderRepository&    orderRepo_;
     ProductionLine&      line_;
     std::ostream&        out_;
-
-    void processCompletedJobs();
 };

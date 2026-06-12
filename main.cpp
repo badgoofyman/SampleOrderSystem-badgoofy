@@ -70,6 +70,7 @@ int main() {
     ReleaseController   releaseCtrl(orderRepo, std::cin, std::cout);
 
     while (true) {
+        prodCtrl.processCompletedJobs();  // 매 턴 생산 완료 자동 전환
         SystemStatus status = buildSystemStatus(sampleRepo, orderRepo);
         MenuView::printMainMenu(status, std::cout);
         int choice = MenuView::getMenuChoice(std::cin, std::cout);

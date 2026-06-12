@@ -13,6 +13,8 @@ public:
     static std::string inputCustomerName(std::istream& in, std::ostream& out);
     static int         inputQuantity(std::istream& in, std::ostream& out);
     static void        printInvalidSampleId(std::ostream& out);
+    static void        printInvalidCustomerName(std::ostream& out);
+    static void        printInvalidQuantity(std::ostream& out);
     static void        printOrderConfirm(const Sample& s, const std::string& customer,
                                          int qty, std::ostream& out);
     static bool        askYesNo(std::istream& in, std::ostream& out);
