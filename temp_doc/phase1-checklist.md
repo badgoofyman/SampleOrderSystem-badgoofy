@@ -1,6 +1,5 @@
 # Phase 1 검토 체크리스트
 
-**검토자**: chloe.lee7@emcore.kr  
 **브랜치**: `phase/1-foundation`  
 **검토 시점**: PR 리뷰 전 로컬에서 직접 확인
 
