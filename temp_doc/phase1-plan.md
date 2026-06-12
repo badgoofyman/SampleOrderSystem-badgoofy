@@ -32,18 +32,16 @@ data/                          ← .gitkeep 으로 디렉터리만 커밋
 
 ## 사전 준비
 
-### nlohmann/json 도입
+### JsonUtil 구현 (자체 JSON 직렬화 유틸)
 
-`repository/` 에서 JSON 파싱에 사용할 헤더 전용 라이브러리.  
-`thirdparty/nlohmann/json.hpp` 단일 헤더 파일로 배치한다.
+외부 라이브러리 없이 `util/JsonUtil.h` / `util/JsonUtil.cpp` 로 구현.  
+JSON 배열(flat object) 읽기·쓰기를 지원하며, Repository 계층에서만 사용한다.
 
 ```
-thirdparty/
-  nlohmann/
-    json.hpp      ← 단일 헤더 (v3.x)
+util/
+  JsonUtil.h    ← JsonObject(map<string,string>), FieldDef, readArray/writeArray 선언
+  JsonUtil.cpp  ← 파서 + 직렬화 구현
 ```
-
-vcxproj `Include` 경로에 `thirdparty/` 추가 필요.
 
 ---
 
@@ -217,7 +215,7 @@ feat: SampleRepository JSON CRUD 구현
 ```
 
 구현 포인트:
-- `nlohmann::json` 사용
+- `JsonUtil::readArray` / `writeArray` 사용
 - `id` 필드로 항목 식별
 - 변경 즉시 전체 파일 재기록
 
