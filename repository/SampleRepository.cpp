@@ -2,6 +2,7 @@
 #include "../util/JsonUtil.h"
 #include <algorithm>
 #include <sstream>
+#include <iomanip>
 
 static const std::vector<JsonUtil::FieldDef> SAMPLE_FIELDS = {
     { "id",               JsonUtil::ValueType::String },
@@ -13,7 +14,7 @@ static const std::vector<JsonUtil::FieldDef> SAMPLE_FIELDS = {
 
 static std::string fmtDouble(double d) {
     std::ostringstream oss;
-    oss << d;
+    oss << std::setprecision(10) << d;
     return oss.str();
 }
 

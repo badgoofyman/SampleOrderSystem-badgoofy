@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-static std::string statusToString(OrderStatus s) {
+std::string statusToString(OrderStatus s) {
     switch (s) {
     case OrderStatus::RESERVED:  return "RESERVED";
     case OrderStatus::PRODUCING: return "PRODUCING";
@@ -13,6 +13,14 @@ static std::string statusToString(OrderStatus s) {
     case OrderStatus::REJECTED:  return "REJECTED";
     default:                     return "UNKNOWN";
     }
+}
+
+OrderStatus statusFromString(const std::string& s) {
+    if (s == "PRODUCING") return OrderStatus::PRODUCING;
+    if (s == "CONFIRMED") return OrderStatus::CONFIRMED;
+    if (s == "RELEASE")   return OrderStatus::RELEASE;
+    if (s == "REJECTED")  return OrderStatus::REJECTED;
+    return OrderStatus::RESERVED;
 }
 
 void Order::transitionTo(OrderStatus next) {

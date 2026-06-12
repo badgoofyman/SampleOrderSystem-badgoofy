@@ -10,6 +10,9 @@ enum class OrderStatus {
     REJECTED
 };
 
+std::string   statusToString(OrderStatus s);
+OrderStatus   statusFromString(const std::string& s);
+
 class Order {
 public:
     std::string orderNo;

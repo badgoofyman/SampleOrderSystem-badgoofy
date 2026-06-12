@@ -12,24 +12,6 @@ static const std::vector<JsonUtil::FieldDef> ORDER_FIELDS = {
     { "releasedAt",          JsonUtil::ValueType::Number },
 };
 
-static std::string statusToString(OrderStatus s) {
-    switch (s) {
-    case OrderStatus::RESERVED:  return "RESERVED";
-    case OrderStatus::PRODUCING: return "PRODUCING";
-    case OrderStatus::CONFIRMED: return "CONFIRMED";
-    case OrderStatus::RELEASE:   return "RELEASE";
-    case OrderStatus::REJECTED:  return "REJECTED";
-    default:                     return "RESERVED";
-    }
-}
-
-static OrderStatus stringToStatus(const std::string& s) {
-    if (s == "PRODUCING") return OrderStatus::PRODUCING;
-    if (s == "CONFIRMED") return OrderStatus::CONFIRMED;
-    if (s == "RELEASE")   return OrderStatus::RELEASE;
-    if (s == "REJECTED")  return OrderStatus::REJECTED;
-    return OrderStatus::RESERVED;
-}
 
 static Order rowToOrder(const JsonUtil::JsonObject& row) {
     auto get = [&](const std::string& k) -> const std::string& {
@@ -44,7 +26,7 @@ static Order rowToOrder(const JsonUtil::JsonObject& row) {
     o.quantity            = get("quantity").empty()            ? 0 : std::stoi(get("quantity"));
     o.productionStartTime = get("productionStartTime").empty() ? 0 : static_cast<time_t>(std::stoll(get("productionStartTime")));
     o.releasedAt          = get("releasedAt").empty()          ? 0 : static_cast<time_t>(std::stoll(get("releasedAt")));
-    o.setStatusDirect(stringToStatus(get("status")));
+    o.setStatusDirect(statusFromString(get("status")));
     return o;
 }
 

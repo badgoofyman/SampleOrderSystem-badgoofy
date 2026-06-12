@@ -83,7 +83,7 @@
 - [ ] `calcProductionQty(20, 0.92)` = **25**
 - [ ] `calcProductionQty(10, 1.0)` = **12**
 - [ ] `calcProductionQty(1, 0.5)` = **3**
-- [ ] `calcProductionQty(9, 0.9)` = **11**
+- [ ] `calcProductionQty(9, 0.9)` = **12**
 - [ ] `calcProductionQty(100, 0.8)` = **139**
 
 ### 5-2. 예외 처리 확인
