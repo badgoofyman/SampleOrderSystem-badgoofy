@@ -527,7 +527,80 @@ SampleOrderSystem/
 - Phase 내 구현 순서: **단위 테스트 작성 → 구현 → 단위 테스트 통과 → E2E 시나리오 확인**
 - 각 Phase 완료 기준: 아래 E2E 체크리스트를 모두 통과
 
-### 13.2 Phase별 개발 계획
+---
+
+### 13.2 Git 워크플로우
+
+#### 브랜치 전략
+
+```
+main
+└── phase/1-foundation
+└── phase/2-sample-ui
+└── phase/3-order
+└── phase/4-production-release
+└── phase/5-monitoring-integration
+```
+
+- `main` 브랜치는 **항상 동작 가능한 상태**를 유지한다.
+- 각 Phase 시작 시 `main`에서 브랜치를 생성한다.
+- Phase 완료 후 PR을 통해서만 `main`에 병합한다.
+
+#### Phase별 브랜치 명 규칙
+
+| Phase | 브랜치명 |
+|-------|---------|
+| Phase 1 | `phase/1-foundation` |
+| Phase 2 | `phase/2-sample-ui` |
+| Phase 3 | `phase/3-order` |
+| Phase 4 | `phase/4-production-release` |
+| Phase 5 | `phase/5-monitoring-integration` |
+
+#### TDD 단계별 커밋 규칙
+
+각 기능 단위를 아래 3단계로 나누어 커밋한다.
+
+```
+[RED]   test: 실패하는 단위 테스트 작성
+[GREEN] feat: 테스트를 통과하는 최소 구현
+[BLUE]  refactor: 코드 정리 (테스트 통과 유지)
+```
+
+**커밋 메시지 접두사**
+
+| 접두사 | 용도 |
+|--------|------|
+| `test:` | 단위 테스트 추가·수정 |
+| `feat:` | 기능 구현 |
+| `refactor:` | 리팩터링 (동작 변경 없음) |
+| `fix:` | 버그 수정 |
+| `docs:` | 문서 수정 |
+| `chore:` | 빌드 설정·기타 |
+
+**Phase 내 커밋 흐름 예시 (Phase 1)**
+
+```
+test: Order State Machine 합법·불법 전환 테스트 작성
+feat: Order State Machine 구현
+test: ProductionCalculator 수치 계산 테스트 작성
+feat: ProductionCalculator 구현
+test: SampleRepository JSON CRUD 테스트 작성
+feat: SampleRepository 구현
+test: OrderRepository JSON CRUD 테스트 작성
+feat: OrderRepository 구현
+```
+
+#### PR 발행 규칙
+
+- **PR 제목**: `[Phase N] 단계명` (예: `[Phase 1] 기반 인프라 — 도메인 모델 + Repository`)
+- **PR 본문**: E2E 체크리스트 전체 포함, 통과 항목 체크
+- **병합 조건**:
+  - Debug 빌드 단위 테스트 전체 통과
+  - E2E 체크리스트 전 항목 통과
+  - 리뷰어 승인 (셀프 리뷰 포함)
+- **병합 방식**: Squash merge 또는 Merge commit (히스토리 보존 목적)
+
+### 13.3 Phase별 개발 계획
 
 ---
 
@@ -634,7 +707,7 @@ SampleOrderSystem/
 
 ---
 
-### 13.3 구현 우선순위 요약
+### 13.4 구현 우선순위 요약
 
 | Phase | 항목 | 핵심 완료 조건 |
 |-------|------|--------------|
