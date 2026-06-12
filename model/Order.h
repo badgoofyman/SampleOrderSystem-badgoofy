@@ -2,6 +2,8 @@
 #include <string>
 #include <ctime>
 
+class OrderRepository;
+
 enum class OrderStatus {
     RESERVED,
     PRODUCING,
@@ -26,7 +28,6 @@ public:
     Order() = default;
 
     OrderStatus getStatus() const { return status_; }
-    void        setStatusDirect(OrderStatus s) { status_ = s; } // 역직렬화 전용
 
     void approve(bool hasEnoughStock);
     void reject();
@@ -36,4 +37,7 @@ public:
 private:
     OrderStatus status_ = OrderStatus::RESERVED;
     void        transitionTo(OrderStatus next);
+    void        setStatusDirect(OrderStatus s) { status_ = s; } // 역직렬화 전용
+
+    friend class OrderRepository;
 };

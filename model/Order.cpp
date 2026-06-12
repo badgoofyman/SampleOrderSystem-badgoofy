@@ -16,11 +16,12 @@ std::string statusToString(OrderStatus s) {
 }
 
 OrderStatus statusFromString(const std::string& s) {
+    if (s == "RESERVED")  return OrderStatus::RESERVED;
     if (s == "PRODUCING") return OrderStatus::PRODUCING;
     if (s == "CONFIRMED") return OrderStatus::CONFIRMED;
     if (s == "RELEASE")   return OrderStatus::RELEASE;
     if (s == "REJECTED")  return OrderStatus::REJECTED;
-    return OrderStatus::RESERVED;
+    throw std::invalid_argument("Unknown order status: " + s);
 }
 
 void Order::transitionTo(OrderStatus next) {

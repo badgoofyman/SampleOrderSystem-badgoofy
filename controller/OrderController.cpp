@@ -136,14 +136,16 @@ void OrderController::processApproval() {
         return;
     }
 
-    // FIFO 가용 재고 계산: stock - sum(CONFIRMED orders for same sampleId)
-    int confirmedQty = 0;
+    // 가용 재고 계산:
+    // - CONFIRMED 경로: approveOrder에서 stock -= qty 즉시 차감 → stock에 이미 반영됨
+    // - PRODUCING 경로: stock 차감 없음 → 별도 차감 필요
+    int producingQty = 0;
     auto allOrders = orderRepo_.findAll();
     for (const auto& o : allOrders) {
-        if (o.sampleId == target.sampleId && o.getStatus() == OrderStatus::CONFIRMED)
-            confirmedQty += o.quantity;
+        if (o.sampleId == target.sampleId && o.getStatus() == OrderStatus::PRODUCING)
+            producingQty += o.quantity;
     }
-    int available = sample->stock - confirmedQty;
+    int available = sample->stock - producingQty;
 
     // 재고 충분 여부 표시 후 Y/N 선택
     int shortage = 0, prodQty = 0, totalMin = 0;
@@ -152,8 +154,7 @@ void OrderController::processApproval() {
     } else {
         shortage = target.quantity - available;
         prodQty  = ProductionCalculator::calcProductionQty(shortage, sample->yield);
-        totalMin = static_cast<int>(
-            ProductionCalculator::calcTotalTimeSeconds(sample->avgProductionTime, prodQty) / 60);
+        totalMin = ProductionCalculator::calcTotalTimeMinutes(sample->avgProductionTime, prodQty);
         OrderView::printStockCheckInsufficient(*sample, target.quantity, available,
                                                shortage, prodQty, totalMin, out_);
     }

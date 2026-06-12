@@ -175,12 +175,13 @@ TEST_F(OrderControllerTest, ProcessApproval_NoReservedOrders_PrintsMessage) {
     EXPECT_THAT(out.str(), HasSubstr("없습니다"));
 }
 
-TEST_F(OrderControllerTest, ProcessApproval_FifoStock_AccountsForConfirmed) {
-    // stock=15, 이미 CONFIRMED 주문 qty=10 → available=5 < 요청 qty=8 → PRODUCING
-    Order confirmed_o;
-    confirmed_o.orderNo = "ORD-OLD"; confirmed_o.sampleId = "S-001";
-    confirmed_o.quantity = 10;
-    confirmed_o.approve(true); // CONFIRMED
+TEST_F(OrderControllerTest, ProcessApproval_FifoStock_AccountsForProducing) {
+    // PRODUCING 주문 P(qty=8) 진행 중: stock=10에서 미차감
+    // 새 주문 N(qty=8): available = 10 - 8 = 2 < 8 → PRODUCING
+    Order producing_o;
+    producing_o.orderNo = "ORD-OLD"; producing_o.sampleId = "S-001";
+    producing_o.quantity = 8;
+    producing_o.approve(false); // PRODUCING
 
     Order reserved_o;
     reserved_o.orderNo = "ORD-NEW"; reserved_o.sampleId = "S-001";
@@ -189,9 +190,9 @@ TEST_F(OrderControllerTest, ProcessApproval_FifoStock_AccountsForConfirmed) {
     EXPECT_CALL(orderRepo, findByStatus(OrderStatus::RESERVED))
         .WillOnce(Return(std::vector<Order>{ reserved_o }));
     EXPECT_CALL(orderRepo, findAll())
-        .WillOnce(Return(std::vector<Order>{ confirmed_o, reserved_o }));
+        .WillOnce(Return(std::vector<Order>{ producing_o, reserved_o }));
     EXPECT_CALL(sampleRepo, findById("S-001"))
-        .WillOnce(Return(makeSample("S-001", 15)));
+        .WillOnce(Return(makeSample("S-001", 10)));  // PRODUCING은 stock 미차감
     EXPECT_CALL(orderRepo, update(_)).Times(1);
 
     setup("1\nY\n");
