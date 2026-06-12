@@ -1,4 +1,4 @@
-﻿#include "OrderController.h"
+#include "OrderController.h"
 #include "../view/OrderView.h"
 #include "../util/ProductionCalculator.h"
 #include <ctime>
@@ -25,11 +25,11 @@ std::string OrderController::generateOrderNo() const {
     strftime(dateBuf, sizeof(dateBuf), "%Y%m%d", &tm_info);
 
     auto all = orderRepo_.findAll();
-    // 오늘 날짜 접두사와 일치하는 주문번호 중 가장 큰 시퀀스 번호 찾기
     std::string prefix = std::string("ORD-") + dateBuf + "-";
     int maxSeq = 0;
     for (const auto& o : all) {
-        if (o.orderNo.substr(0, prefix.size()) == prefix) {
+        if (o.orderNo.size() > prefix.size() &&
+            o.orderNo.substr(0, prefix.size()) == prefix) {
             try {
                 int seq = std::stoi(o.orderNo.substr(prefix.size()));
                 if (seq > maxSeq) maxSeq = seq;
@@ -42,27 +42,47 @@ std::string OrderController::generateOrderNo() const {
 }
 
 void OrderController::placeOrder() {
-    Order o = OrderView::inputNewOrder(in_, out_);
+    out_ << "\n  ── 시료 주문 ──\n";
 
-    auto sample = sampleRepo_.findById(o.sampleId);
-    if (!sample) {
-        out_ << "해당 시료 ID가 없습니다.\n";
+    // 시료 ID 유효성 검사 루프
+    std::string sampleId;
+    std::optional<Sample> sample;
+    while (true) {
+        sampleId = OrderView::inputOrderSampleId(in_, out_);
+        if (sampleId.empty()) return;
+        sample = sampleRepo_.findById(sampleId);
+        if (sample) break;
+        OrderView::printInvalidSampleId(out_);
+    }
+
+    std::string customer = OrderView::inputCustomerName(in_, out_);
+    int qty = OrderView::inputQuantity(in_, out_);
+
+    // 확인 화면
+    OrderView::printOrderConfirm(*sample, customer, qty, out_);
+    if (!OrderView::askYesNo(in_, out_)) {
+        OrderView::printOrderCancelled(out_);
         return;
     }
-    o.orderNo = generateOrderNo();
+
+    Order o;
+    o.sampleId     = sampleId;
+    o.customerName = customer;
+    o.quantity     = qty;
+    o.orderNo      = generateOrderNo();
     orderRepo_.save(o);
     OrderView::printOrderPlaced(o, out_);
 }
 
-void OrderController::approveOrder(Order& o, const Sample& s) {
-    bool enough = s.stock >= o.quantity;
+void OrderController::approveOrder(Order& o, const Sample& s, int available) {
+    bool enough = (available >= o.quantity);
     if (enough) {
         o.approve(true);
         Sample updated = s;
         updated.stock -= o.quantity;
         sampleRepo_.update(updated);
     } else {
-        int shortage = o.quantity - s.stock;
+        int shortage = o.quantity - available;
         int prodQty  = ProductionCalculator::calcProductionQty(shortage, s.yield);
         long long totalSec = ProductionCalculator::calcTotalTimeSeconds(s.avgProductionTime, prodQty);
 
@@ -89,30 +109,47 @@ void OrderController::processApproval() {
         OrderView::printNoReservedOrders(out_);
         return;
     }
-    OrderView::printOrderList(reserved, out_);
 
-    std::string orderNo = OrderView::selectOrderNo(in_, out_);
-    Order* target = nullptr;
-    for (auto& o : reserved)
-        if (o.orderNo == orderNo) { target = &o; break; }
+    OrderView::printOrderListNumbered(reserved, out_);
+    int idx = OrderView::selectOrderIndex(static_cast<int>(reserved.size()), in_, out_);
+    if (idx < 0) return;
 
-    if (!target) {
-        OrderView::printInvalidOrderNo(out_);
+    Order& target = reserved[idx];
+    auto sample = sampleRepo_.findById(target.sampleId);
+    if (!sample) {
+        out_ << "  시료 정보를 찾을 수 없습니다.\n";
         return;
     }
 
-    bool approve = OrderView::askApprove(in_, out_);
-    if (approve) {
-        auto sample = sampleRepo_.findById(target->sampleId);
-        if (!sample) {
-            out_ << "시료 정보를 찾을 수 없습니다.\n";
-            return;
-        }
-        approveOrder(*target, *sample);
-        OrderView::printApproved(*target, out_);
+    // FIFO 가용 재고 계산: stock - sum(CONFIRMED orders for same sampleId)
+    int confirmedQty = 0;
+    auto allOrders = orderRepo_.findAll();
+    for (const auto& o : allOrders) {
+        if (o.sampleId == target.sampleId && o.getStatus() == OrderStatus::CONFIRMED)
+            confirmedQty += o.quantity;
+    }
+    int available = sample->stock - confirmedQty;
+
+    // 재고 충분 여부 표시 후 Y/N 선택
+    int shortage = 0, prodQty = 0, totalMin = 0;
+    if (available >= target.quantity) {
+        OrderView::printStockCheckSufficient(*sample, target.quantity, out_);
     } else {
-        target->reject();
-        orderRepo_.update(*target);
-        OrderView::printRejected(*target, out_);
+        shortage = target.quantity - available;
+        prodQty  = ProductionCalculator::calcProductionQty(shortage, sample->yield);
+        totalMin = static_cast<int>(
+            ProductionCalculator::calcTotalTimeSeconds(sample->avgProductionTime, prodQty) / 60);
+        OrderView::printStockCheckInsufficient(*sample, target.quantity, available,
+                                               shortage, prodQty, totalMin, out_);
+    }
+
+    bool approve = OrderView::askYesNo(in_, out_);
+    if (approve) {
+        approveOrder(target, *sample, available);
+        OrderView::printApprovalResult(target, out_);
+    } else {
+        target.reject();
+        orderRepo_.update(target);
+        OrderView::printRejectionResult(target, out_);
     }
 }

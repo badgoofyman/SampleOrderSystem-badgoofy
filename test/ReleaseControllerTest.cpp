@@ -32,32 +32,33 @@ TEST_F(ReleaseControllerTest, ProcessRelease_NoConfirmedOrders_PrintsMessage) {
     EXPECT_THAT(out.str(), HasSubstr("없습니다"));
 }
 
-TEST_F(ReleaseControllerTest, ProcessRelease_ValidOrder_SetsReleaseAndUpdates) {
+TEST_F(ReleaseControllerTest, ProcessRelease_ValidIndex_SetsReleaseAndUpdates) {
     Order o;
     o.orderNo = "ORD-001"; o.sampleId = "S-001"; o.customerName = "고객A"; o.quantity = 10;
-    // CONFIRMED 상태로 설정
-    o.approve(true);
+    o.approve(true); // CONFIRMED
 
     EXPECT_CALL(orderRepo, findByStatus(OrderStatus::CONFIRMED))
         .WillOnce(Return(std::vector<Order>{ o }));
     EXPECT_CALL(orderRepo, update(_)).Times(1);
 
-    setup("ORD-001\n");
+    setup("1\n");  // 번호 1 선택
     ctrl->processRelease();
 
     EXPECT_THAT(out.str(), HasSubstr("출고"));
 }
 
-TEST_F(ReleaseControllerTest, ProcessRelease_InvalidOrderNo_PrintsError) {
+TEST_F(ReleaseControllerTest, ProcessRelease_InvalidIndex_ExitsGracefully) {
     Order o;
     o.orderNo = "ORD-001"; o.sampleId = "S-001"; o.customerName = "고객A"; o.quantity = 10;
-    o.approve(true);
+    o.approve(true); // CONFIRMED
 
     EXPECT_CALL(orderRepo, findByStatus(OrderStatus::CONFIRMED))
         .WillOnce(Return(std::vector<Order>{ o }));
+    EXPECT_CALL(orderRepo, update(_)).Times(0);  // update 없음
 
-    setup("ORD-INVALID\n");
+    // 범위 초과 번호 → 오류 출력 → EOF → 종료
+    setup("99\n");
     ctrl->processRelease();
 
-    EXPECT_THAT(out.str(), HasSubstr("찾을 수 없습니다"));
+    EXPECT_THAT(out.str(), HasSubstr("잘못된"));
 }

@@ -25,5 +25,5 @@ private:
     std::ostream&        out_;
 
     std::string generateOrderNo() const;
-    void        approveOrder(Order& o, const Sample& s);
+    void        approveOrder(Order& o, const Sample& s, int available);
 };

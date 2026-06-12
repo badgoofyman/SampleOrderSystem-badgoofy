@@ -1,4 +1,4 @@
-﻿#include "ReleaseController.h"
+#include "ReleaseController.h"
 #include "../view/OrderView.h"
 #include <ctime>
 #include <ostream>
@@ -11,24 +11,18 @@ ReleaseController::ReleaseController(IOrderRepository& orderRepo,
 void ReleaseController::processRelease() {
     auto confirmed = orderRepo_.findByStatus(OrderStatus::CONFIRMED);
     if (confirmed.empty()) {
-        out_ << "출고 대기 중인 주문이 없습니다.\n";
+        OrderView::printNoConfirmedOrders(out_);
         return;
     }
 
     OrderView::printOrderList(confirmed, out_);
-    std::string orderNo = OrderView::selectOrderNo(in_, out_);
 
-    Order* target = nullptr;
-    for (auto& o : confirmed)
-        if (o.orderNo == orderNo) { target = &o; break; }
+    int idx = OrderView::selectOrderIndex(static_cast<int>(confirmed.size()), in_, out_);
+    if (idx < 0) return;
 
-    if (!target) {
-        OrderView::printInvalidOrderNo(out_);
-        return;
-    }
-
-    target->release();
-    target->releasedAt = time(nullptr);
-    orderRepo_.update(*target);
-    out_ << "출고 처리 완료: [" << target->orderNo << "] → RELEASE\n";
+    Order& target = confirmed[idx];
+    target.release();
+    target.releasedAt = time(nullptr);
+    orderRepo_.update(target);
+    OrderView::printReleaseResult(target, target.releasedAt, out_);
 }
