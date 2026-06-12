@@ -108,3 +108,60 @@ TEST_F(ProductionControllerTest, ShowProductionLine_CompletedJob_StockUpdatedCor
 
     EXPECT_TRUE(line.isEmpty());
 }
+
+// ===== processCompletedJobs (public) =====
+
+TEST_F(ProductionControllerTest, ProcessCompletedJobs_CompletedJob_SetsConfirmedAndUpdatesStock) {
+    time_t past = time(nullptr) - 9999;
+    line.enqueue({ "ORD-001", "S-001", 10, 100, past });
+
+    Order o;
+    o.orderNo = "ORD-001"; o.sampleId = "S-001"; o.quantity = 5;
+    o.approve(false);
+    o.productionQty = 10;
+
+    EXPECT_CALL(orderRepo, findById("ORD-001")).WillOnce(Return(o));
+    EXPECT_CALL(sampleRepo, findById("S-001")).WillOnce(Return(makeSample("S-001", 0)));
+    EXPECT_CALL(sampleRepo, update(Field(&Sample::stock, 5))).Times(1);
+    EXPECT_CALL(orderRepo, update(_)).Times(1);
+
+    setup();
+    ctrl->processCompletedJobs();  // public 직접 호출
+
+    EXPECT_TRUE(line.isEmpty());
+    EXPECT_THAT(out.str(), HasSubstr("CONFIRMED"));
+}
+
+TEST_F(ProductionControllerTest, ProcessCompletedJobs_InProgressJob_NoUpdate) {
+    time_t future = time(nullptr) + 9999;
+    line.enqueue({ "ORD-001", "S-001", 5, 9999, future });
+
+    setup();
+    ctrl->processCompletedJobs();
+
+    EXPECT_FALSE(line.isEmpty());
+    EXPECT_CALL(orderRepo, update(_)).Times(0);
+}
+
+TEST_F(ProductionControllerTest, ProcessCompletedJobs_MultipleCompleted_ProcessesAll) {
+    time_t past = time(nullptr) - 9999;
+    line.enqueue({ "ORD-001", "S-001", 5, 1, past });
+    line.enqueue({ "ORD-002", "S-002", 3, 1, past });
+
+    Order o1; o1.orderNo = "ORD-001"; o1.sampleId = "S-001"; o1.quantity = 3;
+    o1.approve(false); o1.productionQty = 5;
+    Order o2; o2.orderNo = "ORD-002"; o2.sampleId = "S-002"; o2.quantity = 2;
+    o2.approve(false); o2.productionQty = 3;
+
+    EXPECT_CALL(orderRepo, findById("ORD-001")).WillOnce(Return(o1));
+    EXPECT_CALL(sampleRepo, findById("S-001")).WillOnce(Return(makeSample("S-001", 0)));
+    EXPECT_CALL(orderRepo, findById("ORD-002")).WillOnce(Return(o2));
+    EXPECT_CALL(sampleRepo, findById("S-002")).WillOnce(Return(makeSample("S-002", 0)));
+    EXPECT_CALL(orderRepo, update(_)).Times(2);
+    EXPECT_CALL(sampleRepo, update(_)).Times(2);
+
+    setup();
+    ctrl->processCompletedJobs();
+
+    EXPECT_TRUE(line.isEmpty());
+}
